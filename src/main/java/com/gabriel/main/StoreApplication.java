@@ -2,14 +2,18 @@ package com.gabriel.main;
 
 import java.util.Arrays;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import com.gabriel.main.domain.Categoria;
+import com.gabriel.main.domain.Cidade;
+import com.gabriel.main.domain.Estado;
 import com.gabriel.main.domain.Produto;
 import com.gabriel.main.repositories.CategoriaRepository;
+import com.gabriel.main.repositories.CidadeRepository;
+import com.gabriel.main.repositories.EstadoRepository;
 import com.gabriel.main.repositories.ProdutoRepository;
 
 @SpringBootApplication
@@ -19,6 +23,10 @@ public class StoreApplication implements CommandLineRunner {
 	private CategoriaRepository categoriaRepository;
 	@Autowired
 	private ProdutoRepository produtoRepository;
+	@Autowired
+	private CidadeRepository cidadeRepository;
+	@Autowired
+	private EstadoRepository estadoRepository;
 	
 	public static void main(String[] args) {
 		SpringApplication.run(StoreApplication.class, args);
@@ -42,6 +50,19 @@ public class StoreApplication implements CommandLineRunner {
 		
 		categoriaRepository.saveAll(Arrays.asList(c1,c2));
 		produtoRepository.saveAll(Arrays.asList(p1,p2,p3));
+		
+		Estado est1 = new  Estado(null, "Minas Gerais");
+		Estado est2 = new  Estado(null, "São Paulo");
+		
+		Cidade cd1 = new Cidade(null, "Uberlândia", est1);
+		Cidade cd2 = new Cidade(null, "Uberaba", est1);
+		Cidade cd3 = new Cidade(null, "São Paulo", est2);
+		
+		est1.getCidades().addAll(Arrays.asList(cd1));
+		est1.getCidades().addAll(Arrays.asList(cd2, cd3));
+		
+		estadoRepository.saveAll(Arrays.asList(est1,est2));
+		cidadeRepository.saveAll(Arrays.asList(cd1,cd2,cd3));
 	}
 	
 	
