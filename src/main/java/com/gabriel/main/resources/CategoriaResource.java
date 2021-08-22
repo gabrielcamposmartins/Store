@@ -3,6 +3,7 @@ package com.gabriel.main.resources;
 import java.net.URI;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -13,6 +14,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.gabriel.main.domain.Categoria;
 import com.gabriel.main.services.CategoriaService;
+import com.gabriel.main.services.exceptions.DataIntegrityException;
 
 @RestController
 @RequestMapping(value="/categorias")
@@ -39,6 +41,17 @@ public class CategoriaResource {
 	public ResponseEntity<Void> update(@RequestBody Categoria categoria, @PathVariable Integer id){
 		categoria.setId(id);
 		categoria = service.update(categoria);
+		return ResponseEntity.noContent().build();
+	}
+	
+	@RequestMapping(value="/{id}", method=RequestMethod.DELETE)
+	public ResponseEntity<Categoria> delete(@PathVariable Integer id) {
+		try {
+			service.delete(id);
+		} catch (DataIntegrityViolationException e) {
+			throw new DataIntegrityException("Impossível excluir categoria com produtos!");
+		}
+		
 		return ResponseEntity.noContent().build();
 	}
 }
