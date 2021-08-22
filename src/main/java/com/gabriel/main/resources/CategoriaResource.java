@@ -1,6 +1,8 @@
 package com.gabriel.main.resources;
 
 import java.net.URI;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.gabriel.main.domain.Categoria;
+import com.gabriel.main.dto.CategoriaDTO;
 import com.gabriel.main.services.CategoriaService;
 import com.gabriel.main.services.exceptions.DataIntegrityException;
 
@@ -22,6 +25,13 @@ public class CategoriaResource {
 	
 	@Autowired
 	private CategoriaService service;
+	
+	@RequestMapping(method=RequestMethod.GET)
+	public ResponseEntity<List<CategoriaDTO>> findAll() {
+		List<Categoria> list = this.service.findAll();
+		List<CategoriaDTO> listDTO = list.stream().map(categoria -> new CategoriaDTO(categoria)).collect(Collectors.toList());
+		return ResponseEntity.ok().body(listDTO);
+	}
 	
 	@RequestMapping(value="/{id}", method=RequestMethod.GET)
 	public ResponseEntity<Categoria> find(@PathVariable Integer id) {
