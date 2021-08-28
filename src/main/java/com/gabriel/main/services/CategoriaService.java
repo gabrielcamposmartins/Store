@@ -10,6 +10,7 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
 import com.gabriel.main.domain.Categoria;
+import com.gabriel.main.domain.Cliente;
 import com.gabriel.main.dto.CategoriaDTO;
 import com.gabriel.main.repositories.CategoriaRepository;
 import com.gabriel.main.services.exceptions.ObjectNotFoundException;
@@ -37,8 +38,9 @@ public class CategoriaService {
 	}
 	
 	public Categoria update(Categoria categoria) {
-		find(categoria.getId());
-		return repo.save(categoria);
+		Categoria novo = find(categoria.getId());
+		updateData(novo, categoria);
+		return repo.save(novo);
 	}
 	
 	public void delete(Integer id) {
@@ -53,5 +55,9 @@ public class CategoriaService {
 	
 	public Categoria fromDTO(CategoriaDTO categoriaDto) {
 		return new Categoria(categoriaDto.getId(), categoriaDto.getNome());
+	}
+	
+	private void updateData(Categoria novo, Categoria categoria) {
+		novo.setNome(categoria.getNome());
 	}
 }
