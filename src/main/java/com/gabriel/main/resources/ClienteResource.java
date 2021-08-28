@@ -17,9 +17,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.gabriel.main.domain.Cliente;
-import com.gabriel.main.domain.Cliente;
-
 import com.gabriel.main.dto.ClienteDTO;
+import com.gabriel.main.dto.ClienteNewDTO;
 import com.gabriel.main.services.ClienteService;
 import com.gabriel.main.services.exceptions.DataIntegrityException;
 
@@ -37,7 +36,7 @@ public class ClienteResource {
 	}
 	
 	@RequestMapping(method=RequestMethod.POST)
-	public ResponseEntity<Void> insert(@Valid @RequestBody ClienteDTO clienteDto){
+	public ResponseEntity<Void> insert(@Valid @RequestBody ClienteNewDTO clienteDto){
 		Cliente cliente = service.fromDTO(clienteDto);
 		cliente = service.insert(cliente);
 		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
