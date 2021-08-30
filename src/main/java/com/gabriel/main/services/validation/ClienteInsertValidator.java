@@ -6,13 +6,20 @@ import java.util.List;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.gabriel.main.domain.Cliente;
 import com.gabriel.main.domain.enums.TipoCliente;
 import com.gabriel.main.dto.ClienteNewDTO;
+import com.gabriel.main.repositories.ClienteRepository;
 import com.gabriel.main.resources.exceptions.FieldMessage;
 import com.gabriel.main.services.validation.utils.BR;
 
 public class ClienteInsertValidator implements ConstraintValidator<ClienteInsert, ClienteNewDTO>{
 
+	@Autowired
+	private ClienteRepository repo;
+	
 	@Override
 	public void initialize(ClienteInsert ann) {
 	}
@@ -31,6 +38,12 @@ public class ClienteInsertValidator implements ConstraintValidator<ClienteInsert
 		
 		if(value.getTipo().equals(TipoCliente.PESSOA_JURIDICA.getCod()) && BR.isValidCNPJ(value.getCpfOuCnpj())) {
 			list.add(new FieldMessage("cpfOuCnpj", "CNPJ inválido"));
+		}
+		
+		Cliente aux = repo.findByEmail(value.getEmail());
+		
+		if(aux != null) {
+			list.add(new FieldMessage("email", "Email já existente"));
 		}
 		
 		for (FieldMessage e : list) {
