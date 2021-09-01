@@ -26,6 +26,9 @@ public class PedidoService {
 	private BoletoService boletoService;
 
 	@Autowired
+	private ClienteService clienteService;
+
+	@Autowired
 	private ProdutoService produtoService;
 
 	@Autowired
@@ -45,6 +48,7 @@ public class PedidoService {
 	public Pedido insert(Pedido pedido) {
 		pedido.setId(null);
 		pedido.setInstante(new Date());
+		pedido.setCliente(clienteService.find(pedido.getCliente().getId()));
 		pedido.getPagamento().setEstado(EstadoPagamento.PENDENTE);
 		pedido.getPagamento().setPedido(pedido);
 		if (pedido.getPagamento() instanceof PagamentoComBoleto) {
@@ -55,10 +59,12 @@ public class PedidoService {
 		pagamentoRepo.save(pedido.getPagamento());
 		for (ItemPedido ip : pedido.getItens()) {
 			ip.setDesconto(0.0);
-			ip.setPreço(produtoService.find(ip.getProduto().getId()).getPreco());
+			ip.setProduto(produtoService.find(ip.getProduto().getId()));
+			ip.setPreco(ip.getProduto().getPreco());
 			ip.setPedido(pedido);
 		}
 		itemPedidoRepo.saveAll(pedido.getItens());
+		System.out.println(pedido);
 		return pedido;
 	}
 }
